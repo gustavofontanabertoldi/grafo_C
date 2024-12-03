@@ -79,21 +79,45 @@ void imprime(GRAFO *gr){
 	}
 }
 
-int main()
-{
-	
-	GRAFO * gr = criaGrafo(5);
-	criaAresta(gr, 0, 1, 2);
-	criaAresta(gr, 1, 2, 4);
-	criaAresta(gr, 2, 0, 12);
-	criaAresta(gr, 2, 4, 40);
-	criaAresta(gr, 3, 1, 3);
-	criaAresta(gr, 4, 3, 8);
-	criaAresta(gr, 0, 3, 5);
-	criaAresta(gr, 1, 4, 7);
-	criaAresta(gr, 3, 0, 6);
-	criaAresta(gr, 4, 2, 9);
+void ajustaParaRegular(GRAFO *gr, int grauDesejado, int pesoPadrao) {
+    for (int i = 0; i < gr->vertices; i++) {
+        // Conta o número de arestas atuais do vértice
+        int grauAtual = 0;
+        ADJACENCIA *ad = gr->adj[i].cab;
+        while (ad) {
+            grauAtual++;
+            ad = ad->prox;
+        }
 
-    
+        // Adiciona arestas para atingir o grau desejado
+        while (grauAtual < grauDesejado) {
+            int destino = rand() % gr->vertices; // Escolhe um vértice aleatório
+            if (destino != i) { // Evita laços
+                criaAresta(gr, i, destino, pesoPadrao);
+                grauAtual++;
+            }
+        }
+    }
+}
+
+int main() {
+    // Criação do grafo inicial
+    GRAFO *gr = criaGrafo(5);
+    criaAresta(gr, 0, 1, 2);
+    criaAresta(gr, 1, 2, 4);
+    criaAresta(gr, 2, 0, 12);
+    criaAresta(gr, 2, 4, 40);
+    criaAresta(gr, 3, 1, 3);
+    criaAresta(gr, 4, 3, 8);
+
+    printf("Grafo antes da melhoria:\n");
     imprime(gr);
+
+    // Ajusta o grafo para que todos os vértices tenham grau 3
+    ajustaParaRegular(gr, 3, 1);
+
+    printf("\nGrafo após tornar regular:\n");
+    imprime(gr);
+
+    return 0;
 }
